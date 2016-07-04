@@ -1,43 +1,34 @@
 package edu.tuc.bsvs.remoteimagemanipulation;
 
 import edu.tuc.bsvs.remoteimagemanipulation.client.Client;
-import edu.tuc.bsvs.remoteimagemanipulation.server.ServerProc;
-
-import java.util.Scanner;
+import edu.tuc.bsvs.remoteimagemanipulation.server.Server;
+import org.apache.commons.cli.*;
 
 class RemoteImageManipulation {
 
+    /**
+     * Let the user decide if he wants to start a server or a client
+     * @param args
+     */
     public static void main(String[] args) {
 
-        Scanner scan = new Scanner(System.in);
-        boolean again;
-        int intInput = -1;
+        Options options = new Options();
+        options.addOption("s", false, "start as a server");
 
-        do {
-            again = false;
-            System.out.print("[1] SERVER or [2] CLIENT: ");
-            String input = scan.nextLine();
+        CommandLineParser parser = new DefaultParser();
+        CommandLine cmd = null;
 
-            try {
-                intInput = Integer.valueOf(input);
-            } catch (Exception e) {
-                System.out.println("Wrong input!");
-                again = true;
-            }
-        } while(again);
+        try {
+            cmd = parser.parse(options, args);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
 
-        switch(intInput) {
-            case 1:
-                new ServerProc().start();
-                break;
-            case 2:
-                new Client().start();
-                break;
-            case -1:
-                System.out.println("An error occured.");
-                break;
-            default:
-                break;
+
+        if(cmd != null && cmd.hasOption("s")) {
+            new Server().start();
+        } else {
+            new Client().show();
         }
     }
 
